@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>SmartAgri | AI-Powered Agriculture</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+
+<body class="home-page">
+
+
+<!-- =========================================
+     NAVIGATION
+========================================= -->
+
+<nav class="navbar">
+
+    <div class="logo">
+        🌱 SmartAgri
+    </div>
+
+
+    <div class="nav-links">
+
+        <a href="/">
+            Home
+        </a>
+
+        <a href="#features">
+            Features
+        </a>
+
+        <a href="#about">
+            About
+        </a>
+
+    </div>
+
+</nav>
+
+
+
+<!-- =========================================
+     HERO SECTION
+========================================= -->
+
+<section class="hero">
+
+    <div class="hero-content">
+
+
+        <!-- LEFT SIDE -->
+
+        <div class="hero-text">
+
+            <p class="small-title">
+                AI-POWERED AGRICULTURE
+            </p>
+
+
+            <h1>
+
+                Smarter Farming with
+
+                <span>
+                    Artificial Intelligence
+                </span>
+
+            </h1>
+
+
+            <p class="hero-description">
+
+                An AI-powered agriculture platform that helps
+                farmers identify crop diseases and predict
+                crop yield using intelligent machine learning
+                technologies.
+
+            </p>
+
+
+            <div class="hero-buttons">
+
+                <a href="#features"
+                   class="btn-main">
+
+                    Explore Features
+
+                </a>
+
+
+                <a href="#about"
+                   class="btn-outline">
+
+                    Learn More
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- RIGHT SIDE -->
+
+        <div class="hero-card">
+
+            <div class="hero-icon">
+                🌾
+            </div>
+
+
+            <h2>
+                AI-Powered Agriculture
+            </h2>
+
+
+            <p>
+
+                Detect crop diseases and estimate agricultural
+                yield using intelligent machine learning models.
+
+            </p>
+
+
+            <div class="hero-mini-stats">
+
+                <div>
+
+                    <strong>
+                        🤖 AI
+                    </strong>
+
+                    <span>
+                        Smart Analysis
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        🌱 ML
+                    </strong>
+
+                    <span>
+                        Crop Prediction
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        📊 Data
+                    </strong>
+
+                    <span>
+                        Insights
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================
+     FEATURES SECTION
+========================================= -->
+
+<section id="features"
+         class="features-section">
+
+
+    <div class="section-heading">
+
+        <p class="small-title">
+            SMART TECHNOLOGY
+        </p>
+
+
+        <h2>
+            Smart Agriculture Features
+        </h2>
+
+
+        <p>
+            Intelligent tools designed to support
+            modern farming.
+        </p>
+
+    </div>
+
+
+
+    <div class="feature-container">
+
+
+        <!-- =================================
+             DISEASE DETECTION
+        ================================== -->
+
+        <div class="feature-card">
+
+            <div class="feature-icon">
+                🌿
+            </div>
+
+
+            <h3>
+                Crop Disease Detection
+            </h3>
+
+
+            <p>
+
+                Upload a crop leaf image and our trained
+                AI model analyzes the image to identify
+                possible crop diseases.
+
+            </p>
+
+
+            <a href="{{ url_for('disease') }}"
+               class="btn-main">
+
+                Detect Disease →
+
+            </a>
+
+        </div>
+
+
+
+        <!-- =================================
+             YIELD PREDICTION
+        ================================== -->
+
+        <div class="feature-card">
+
+            <div class="feature-icon">
+                📊
+            </div>
+
+
+            <h3>
+                Crop Yield Prediction
+            </h3>
+
+
+            <p>
+
+                Enter agricultural information such as
+                crop, area, rainfall and other factors to
+                predict expected crop yield.
+
+            </p>
+
+
+            <a href="{{ url_for('yield_prediction') }}"
+               class="btn-main">
+
+                Predict Yield →
+
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================
+     ABOUT SECTION
+========================================= -->
+
+<section id="about"
+         class="about-section">
+
+
+    <div class="about-box">
+
+        <p class="small-title">
+            ABOUT THE PROJECT
+        </p>
+
+
+        <h2>
+            About SmartAgri
+        </h2>
+
+
+        <p>
+
+            SmartAgri combines artificial intelligence,
+            machine learning and web technologies to provide
+            useful agricultural insights.
+
+        </p>
+
+
+        <p>
+
+            The system focuses on two important agricultural
+            applications: crop disease detection and crop
+            yield prediction.
+
+        </p>
+
+
+        <div class="about-highlights">
+
+            <div>
+
+                <span>
+                    🌿
+                </span>
+
+                <strong>
+                    Disease Detection
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    📈
+                </span>
+
+                <strong>
+                    Yield Prediction
+                </strong>
+
+            </div>
+
+
+            <div>
+
+                <span>
+                    🤖
+                </span>
+
+                <strong>
+                    Machine Learning
+                </strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================
+     FOOTER
+========================================= -->
+
+<footer>
+
+    <p>
+        © 2026 SmartAgri | AI-Powered Agriculture
+    </p>
+
+</footer>
+
+
+</body>
+
+</html>

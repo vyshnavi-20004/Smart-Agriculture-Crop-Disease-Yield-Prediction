@@ -1,0 +1,700 @@
+/* ================================
+   SMART AGRICULTURE - MAIN CSS
+   ================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: #183b20;
+    min-height: 100vh;
+
+    /* DEFAULT AGRICULTURE BACKGROUND */
+    background:
+        linear-gradient(
+            rgba(235, 250, 238, 0.55),
+            rgba(235, 250, 238, 0.55)
+        ),
+        url("https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&w=2000&q=85")
+        center center / cover fixed no-repeat;
+}
+
+
+/* ================================
+   BACKGROUND IMAGES
+   ================================ */
+
+/* HOME PAGE */
+
+.home-page {
+    min-height: 100vh;
+
+    background:
+        linear-gradient(
+            rgba(235, 250, 238, 0.62),
+            rgba(235, 250, 238, 0.62)
+        ),
+        url("https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=2000&q=85")
+        center center / cover fixed no-repeat;
+}
+
+
+/* DISEASE PAGE */
+
+.disease-page {
+    min-height: 100vh;
+
+    background:
+        linear-gradient(
+            rgba(235, 250, 238, 0.55),
+            rgba(235, 250, 238, 0.55)
+        ),
+        url("https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&w=2000&q=85")
+        center center / cover fixed no-repeat;
+}
+
+
+/* YIELD PAGE */
+
+.yield-page {
+    min-height: 100vh;
+
+    background:
+        linear-gradient(
+            rgba(235, 250, 238, 0.55),
+            rgba(235, 250, 238, 0.55)
+        ),
+        url("https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&w=2000&q=85")
+        center center / cover fixed no-repeat;
+}
+
+
+/* ================================
+   NAVBAR
+   ================================ */
+
+.navbar {
+    width: 100%;
+
+    padding: 18px 7%;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background: rgba(255, 255, 255, 0.90);
+
+    backdrop-filter: blur(10px);
+
+    border-bottom: 1px solid rgba(40, 120, 55, 0.15);
+
+    position: relative;
+
+    z-index: 10;
+}
+
+
+.logo {
+    font-size: 25px;
+
+    font-weight: 800;
+
+    color: #176b2c;
+
+    text-decoration: none;
+}
+
+
+.nav-links {
+    display: flex;
+
+    gap: 28px;
+
+    align-items: center;
+}
+
+
+.nav-links a {
+    text-decoration: none;
+
+    color: #285a32;
+
+    font-weight: 600;
+
+    transition: 0.3s;
+}
+
+
+.nav-links a:hover {
+    color: #0c8b35;
+}
+
+
+/* ================================
+   HERO SECTION
+   ================================ */
+
+.hero {
+    min-height: 590px;
+
+    padding: 80px 8%;
+
+    display: flex;
+
+    align-items: center;
+}
+
+
+.hero-content {
+    max-width: 650px;
+
+    background: rgba(255, 255, 255, 0.82);
+
+    padding: 45px;
+
+    border-radius: 24px;
+
+    box-shadow:
+        0 15px 45px rgba(28, 75, 35, 0.15);
+}
+
+
+.hero h1 {
+    font-size: 52px;
+
+    line-height: 1.1;
+
+    color: #155d25;
+
+    margin-bottom: 20px;
+}
+
+
+.hero p {
+    font-size: 18px;
+
+    line-height: 1.7;
+
+    color: #416348;
+
+    margin-bottom: 30px;
+}
+
+
+/* ================================
+   BUTTONS
+   ================================ */
+
+.btn-main {
+    display: inline-block;
+
+    padding: 13px 25px;
+
+    margin-right: 10px;
+
+    margin-bottom: 10px;
+
+    background: #16823b;
+
+    color: white;
+
+    text-decoration: none;
+
+    border: none;
+
+    border-radius: 9px;
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+}
+
+
+.btn-main:hover {
+    background: #0d632b;
+
+    transform: translateY(-2px);
+}
+
+
+/* ================================
+   FEATURES
+   ================================ */
+
+.features {
+    padding: 70px 8%;
+
+    background: rgba(248, 255, 249, 0.88);
+}
+
+
+.section-title {
+    text-align: center;
+
+    margin-bottom: 40px;
+}
+
+
+.section-title h2 {
+    font-size: 34px;
+
+    color: #155d25;
+
+    margin-bottom: 10px;
+}
+
+
+.section-title p {
+    color: #527057;
+}
+
+
+.feature-grid {
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 30px;
+
+    max-width: 1000px;
+
+    margin: auto;
+}
+
+
+.feature-card {
+    background: rgba(255, 255, 255, 0.96);
+
+    padding: 35px;
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 10px 30px rgba(30, 80, 40, 0.12);
+
+    transition: 0.3s;
+}
+
+
+.feature-card:hover {
+    transform: translateY(-7px);
+
+    box-shadow:
+        0 18px 35px rgba(30, 80, 40, 0.18);
+}
+
+
+.feature-icon {
+    font-size: 42px;
+
+    margin-bottom: 15px;
+}
+
+
+.feature-card h3 {
+    color: #176b2c;
+
+    margin-bottom: 12px;
+
+    font-size: 23px;
+}
+
+
+.feature-card p {
+    color: #607562;
+
+    line-height: 1.6;
+
+    margin-bottom: 20px;
+}
+
+
+/* ================================
+   ABOUT
+   ================================ */
+
+.about-section {
+    padding: 70px 10%;
+
+    background: rgba(229, 247, 232, 0.90);
+
+    text-align: center;
+}
+
+
+.about-section h2 {
+    color: #155d25;
+
+    font-size: 34px;
+
+    margin-bottom: 20px;
+}
+
+
+.about-section p {
+    max-width: 850px;
+
+    margin: auto;
+
+    color: #4e6954;
+
+    font-size: 17px;
+
+    line-height: 1.8;
+}
+
+
+/* ================================
+   DISEASE / YIELD PAGE
+   ================================ */
+
+.page-container {
+    min-height: calc(100vh - 80px);
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    padding: 60px 20px;
+}
+
+
+.prediction-card {
+    width: 100%;
+
+    max-width: 650px;
+
+    background: rgba(255, 255, 255, 0.94);
+
+    padding: 40px;
+
+    border-radius: 24px;
+
+    box-shadow:
+        0 18px 50px rgba(20, 75, 30, 0.20);
+
+    backdrop-filter: blur(8px);
+}
+
+
+.prediction-card h1 {
+    text-align: center;
+
+    color: #155d25;
+
+    margin-bottom: 12px;
+
+    font-size: 32px;
+}
+
+
+.prediction-card .description {
+    text-align: center;
+
+    color: #607562;
+
+    margin-bottom: 30px;
+
+    line-height: 1.6;
+}
+
+
+/* ================================
+   FORM
+   ================================ */
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+
+.form-group label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #285a32;
+
+    font-weight: 700;
+}
+
+
+.form-group input,
+.form-group select {
+    width: 100%;
+
+    padding: 13px 14px;
+
+    border: 1px solid #c5dcc9;
+
+    border-radius: 9px;
+
+    font-size: 15px;
+
+    outline: none;
+
+    background: white;
+}
+
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #16823b;
+
+    box-shadow:
+        0 0 0 3px rgba(22, 130, 59, 0.10);
+}
+
+
+.form-grid {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 18px;
+}
+
+
+.file-box {
+    border: 2px dashed #82b98b;
+
+    border-radius: 12px;
+
+    padding: 25px;
+
+    text-align: center;
+
+    background: rgba(238, 250, 240, 0.8);
+
+    margin-bottom: 25px;
+}
+
+
+.file-box input {
+    width: 100%;
+}
+
+
+/* ================================
+   YIELD PREDICTION
+   ================================ */
+
+.yield-container {
+    width: 100%;
+
+    max-width: 750px;
+
+    margin: 40px auto;
+
+    padding: 30px;
+
+    background: rgba(255, 255, 255, 0.92);
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 10px 35px rgba(0, 0, 0, 0.25);
+
+    backdrop-filter: blur(5px);
+}
+
+
+.yield-container h1 {
+    text-align: center;
+
+    margin-bottom: 8px;
+
+    color: #14532d;
+
+    font-size: 32px;
+}
+
+
+.yield-container .subtitle {
+    text-align: center;
+
+    margin-bottom: 28px;
+
+    color: #555;
+
+    font-size: 18px;
+}
+
+
+/* ================================
+   PREDICT BUTTON
+   ================================ */
+
+.predict-btn {
+    width: 100%;
+
+    padding: 14px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: #198754;
+
+    color: white;
+
+    font-size: 17px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+}
+
+
+.predict-btn:hover {
+    background: #146c43;
+
+    transform: translateY(-1px);
+}
+
+
+/* ================================
+   RESULT BOX
+   ================================ */
+
+.result-box {
+    margin-top: 28px;
+
+    padding: 22px;
+
+    background: rgba(233, 247, 239, 0.96);
+
+    border-left: 5px solid #198754;
+
+    border-radius: 10px;
+
+    box-shadow:
+        0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+
+.result-box h2 {
+    margin-top: 0;
+
+    color: #14532d;
+}
+
+
+.result-value {
+    font-size: 25px;
+
+    font-weight: bold;
+
+    color: #198754;
+
+    margin-top: 5px;
+
+    margin-bottom: 18px;
+}
+
+
+/* ================================
+   ERROR BOX
+   ================================ */
+
+.error-box {
+    margin-top: 20px;
+
+    padding: 15px;
+
+    background: #fdeaea;
+
+    border-left: 5px solid #dc3545;
+
+    border-radius: 8px;
+
+    color: #a71d2a;
+}
+
+
+/* ================================
+   FOOTER
+   ================================ */
+
+footer {
+    padding: 22px;
+
+    text-align: center;
+
+    background: #124d22;
+
+    color: white;
+}
+
+
+footer p {
+    font-size: 14px;
+}
+
+
+/* ================================
+   RESPONSIVE
+   ================================ */
+
+@media (max-width: 768px) {
+
+    .navbar {
+        padding: 16px 5%;
+    }
+
+
+    .nav-links {
+        gap: 12px;
+    }
+
+
+    .hero {
+        padding: 50px 5%;
+    }
+
+
+    .hero-content {
+        padding: 30px;
+    }
+
+
+    .hero h1 {
+        font-size: 38px;
+    }
+
+
+    .feature-grid {
+        grid-template-columns: 1fr;
+    }
+
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+
+    .yield-container {
+        margin: 20px;
+
+        width: auto;
+
+        padding: 22px;
+    }
+
+}

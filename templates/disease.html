@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Crop Disease Detection</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+
+        /* ================================
+           DISEASE PAGE
+        ================================= */
+
+        body {
+            min-height: 100vh;
+
+            background:
+                linear-gradient(
+                    rgba(235, 250, 238, 0.55),
+                    rgba(235, 250, 238, 0.55)
+                ),
+                url("https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&w=2000&q=85")
+                center center / cover fixed no-repeat;
+        }
+
+
+        /* ================================
+           MAIN CONTAINER
+        ================================= */
+
+        .upload-section {
+
+            width: 90%;
+
+            max-width: 750px;
+
+            margin: 50px auto;
+
+            padding: 40px;
+
+            text-align: center;
+
+            background: rgba(255, 255, 255, 0.93);
+
+            border-radius: 24px;
+
+            box-shadow:
+                0 18px 50px rgba(20, 75, 30, 0.20);
+
+            backdrop-filter: blur(8px);
+        }
+
+
+        /* ================================
+           TITLE
+        ================================= */
+
+        .upload-section h1 {
+
+            color: #155d25;
+
+            font-size: 34px;
+
+            margin-bottom: 15px;
+        }
+
+
+        .upload-section > p {
+
+            color: #527057;
+
+            font-size: 17px;
+
+            line-height: 1.6;
+
+            margin-bottom: 30px;
+        }
+
+
+        /* ================================
+           FILE UPLOAD
+        ================================= */
+
+        .file-input {
+
+            border: 2px dashed #82b98b;
+
+            border-radius: 14px;
+
+            padding: 25px;
+
+            margin-bottom: 25px;
+
+            background: rgba(238, 250, 240, 0.85);
+        }
+
+
+        .file-input input {
+
+            width: 100%;
+
+            padding: 10px;
+
+            cursor: pointer;
+        }
+
+
+        /* ================================
+           BUTTON
+        ================================= */
+
+        .analyze-btn {
+
+            display: inline-block;
+
+            padding: 14px 30px;
+
+            background: #16823b;
+
+            color: white;
+
+            border: none;
+
+            border-radius: 9px;
+
+            font-size: 16px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            transition: 0.3s;
+        }
+
+
+        .analyze-btn:hover {
+
+            background: #0d632b;
+
+            transform: translateY(-2px);
+        }
+
+
+        /* ================================
+           RESULT BOX
+        ================================= */
+
+        .result-box {
+
+            margin-top: 35px;
+
+            padding: 25px;
+
+            border-radius: 18px;
+
+            background: rgba(245, 255, 245, 0.96);
+
+            border: 2px solid #4caf50;
+
+            text-align: center;
+
+            box-shadow:
+                0 8px 25px rgba(30, 80, 40, 0.12);
+        }
+
+
+        .result-box h2 {
+
+            color: #155d25;
+
+            margin-bottom: 15px;
+        }
+
+
+        /* ================================
+           UPLOADED IMAGE
+        ================================= */
+
+        .result-box img {
+
+            display: block;
+
+            width: auto;
+
+            max-width: 100%;
+
+            max-height: 350px;
+
+            object-fit: contain;
+
+            border-radius: 14px;
+
+            margin: 20px auto;
+
+            border: 3px solid #82b98b;
+
+            box-shadow:
+                0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+
+        /* ================================
+           PREDICTION
+        ================================= */
+
+        .prediction {
+
+            font-size: 23px;
+
+            font-weight: bold;
+
+            margin: 15px 0;
+
+            color: #1b5e20;
+
+            word-break: break-word;
+        }
+
+
+        /* ================================
+           CONFIDENCE
+        ================================= */
+
+        .confidence {
+
+            font-size: 19px;
+
+            font-weight: bold;
+
+            margin: 12px 0;
+
+            color: #285a32;
+        }
+
+
+        /* ================================
+           STATUS
+        ================================= */
+
+        .status {
+
+            display: inline-block;
+
+            padding: 10px 22px;
+
+            border-radius: 25px;
+
+            background: #e8f5e9;
+
+            color: #2e7d32;
+
+            font-weight: bold;
+
+            margin-top: 10px;
+        }
+
+
+        /* ================================
+           RESULT MESSAGE
+        ================================= */
+
+        .result-message {
+
+            margin-top: 20px;
+
+            color: #527057;
+
+            font-weight: 600;
+        }
+
+
+        /* ================================
+           MOBILE
+        ================================= */
+
+        @media (max-width: 768px) {
+
+            .upload-section {
+
+                width: auto;
+
+                margin: 25px 15px;
+
+                padding: 25px 20px;
+            }
+
+
+            .upload-section h1 {
+
+                font-size: 28px;
+            }
+
+
+            .prediction {
+
+                font-size: 19px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================
+     MAIN DISEASE DETECTION SECTION
+====================================== -->
+
+<div class="upload-section">
+
+
+    <h1>
+        🌱 Crop Disease Detection
+    </h1>
+
+
+    <p>
+        Upload a crop leaf image and our AI model
+        will analyze it to identify the crop disease.
+    </p>
+
+
+    <!-- =================================
+         UPLOAD FORM
+    ================================== -->
+
+    <form
+        action="{{ url_for('disease') }}"
+        method="POST"
+        enctype="multipart/form-data"
+    >
+
+
+        <div class="file-input">
+
+            <input
+                type="file"
+                id="crop-image"
+                name="crop-image"
+                accept="image/*"
+                required
+            >
+
+        </div>
+
+
+        <button
+            type="submit"
+            class="analyze-btn"
+        >
+
+            🔍 Analyze Crop
+
+        </button>
+
+    </form>
+
+
+    <!-- =================================
+         AI RESULT
+    ================================== -->
+
+    {% if result %}
+
+    <div class="result-box">
+
+
+        <h2>
+            🤖 AI Prediction Result
+        </h2>
+
+
+        <!-- Uploaded Image -->
+
+        {% if image_path %}
+
+        <img
+            src="{{ image_path }}"
+            alt="Uploaded Crop Image"
+        >
+
+        {% endif %}
+
+
+        <!-- Prediction -->
+
+        {% if prediction %}
+
+        <div class="prediction">
+
+            🌿 {{ prediction }}
+
+        </div>
+
+
+        <!-- Confidence -->
+
+        {% if confidence is not none %}
+
+        <div class="confidence">
+
+            🎯 Confidence:
+            {{ "%.2f"|format(confidence) }}%
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- Status -->
+
+        {% if status %}
+
+        <div class="status">
+
+            {{ status }}
+
+        </div>
+
+        {% endif %}
+
+        {% endif %}
+
+
+        <!-- Result Message -->
+
+        <p class="result-message">
+
+            {{ result }}
+
+        </p>
+
+
+    </div>
+
+    {% endif %}
+
+
+</div>
+
+
+</body>
+
+</html>

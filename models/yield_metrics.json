@@ -1,0 +1,8 @@
+{
+    "model": "Random Forest Regressor",
+    "dataset_rows": 19689,
+    "training_rows": 15751,
+    "testing_rows": 3938,
+    "mean_absolute_error": 9.669802111340896,
+    "r2_score": 0.9801233778355629
+}

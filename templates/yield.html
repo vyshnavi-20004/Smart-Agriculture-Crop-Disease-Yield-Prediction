@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Smart Agriculture - Yield Prediction</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+
+        /* =====================================
+           MAIN CONTAINER
+        ====================================== */
+
+        .yield-container {
+
+            width: 90%;
+
+            max-width: 750px;
+
+            margin: 50px auto;
+
+            padding: 35px;
+
+            background: rgba(255, 255, 255, 0.94);
+
+            border-radius: 22px;
+
+            box-shadow:
+                0 15px 40px rgba(0, 0, 0, 0.20);
+
+            backdrop-filter: blur(6px);
+        }
+
+
+        /* =====================================
+           TITLE
+        ====================================== */
+
+        .yield-container h1 {
+
+            text-align: center;
+
+            margin-bottom: 8px;
+
+            color: #14532d;
+
+            font-size: 32px;
+        }
+
+
+        .subtitle {
+
+            text-align: center;
+
+            margin-bottom: 30px;
+
+            color: #555;
+
+            font-size: 18px;
+        }
+
+
+        /* =====================================
+           FORM
+        ====================================== */
+
+        .form-group {
+
+            margin-bottom: 18px;
+        }
+
+
+        .form-group label {
+
+            display: block;
+
+            font-weight: bold;
+
+            margin-bottom: 7px;
+
+            color: #333;
+        }
+
+
+        .form-group input,
+        .form-group select {
+
+            width: 100%;
+
+            padding: 12px;
+
+            border: 1px solid #ccc;
+
+            border-radius: 8px;
+
+            font-size: 15px;
+
+            box-sizing: border-box;
+
+            background: white;
+        }
+
+
+        .form-group input:focus,
+        .form-group select:focus {
+
+            outline: none;
+
+            border-color: #198754;
+
+            box-shadow:
+                0 0 5px rgba(25, 135, 84, 0.3);
+        }
+
+
+        /* =====================================
+           PREDICT BUTTON
+        ====================================== */
+
+        .predict-btn {
+
+            width: 100%;
+
+            padding: 14px;
+
+            border: none;
+
+            border-radius: 9px;
+
+            background: #198754;
+
+            color: white;
+
+            font-size: 17px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: 0.3s;
+        }
+
+
+        .predict-btn:hover {
+
+            background: #146c43;
+
+            transform: translateY(-2px);
+        }
+
+
+        /* =====================================
+           RESULT BOX
+        ====================================== */
+
+        .result-box {
+
+            margin-top: 30px;
+
+            padding: 25px;
+
+            background: rgba(233, 247, 239, 0.97);
+
+            border-left: 5px solid #198754;
+
+            border-radius: 12px;
+
+            box-shadow:
+                0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+
+        .result-box h2 {
+
+            margin-top: 0;
+
+            color: #14532d;
+
+            text-align: center;
+
+            margin-bottom: 25px;
+        }
+
+
+        .result-value {
+
+            font-size: 25px;
+
+            font-weight: bold;
+
+            color: #198754;
+
+            margin-top: 5px;
+
+            margin-bottom: 18px;
+        }
+
+
+        /* =====================================
+           SUCCESS MESSAGE
+        ====================================== */
+
+        .success-message {
+
+            text-align: center;
+
+            color: #216e39;
+
+            font-weight: 600;
+
+            margin-top: 20px;
+        }
+
+
+        /* =====================================
+           ERROR BOX
+        ====================================== */
+
+        .error-box {
+
+            margin-top: 20px;
+
+            padding: 15px;
+
+            background: #fdeaea;
+
+            border-left: 5px solid #dc3545;
+
+            border-radius: 8px;
+
+            color: #a71d2a;
+        }
+
+
+        /* =====================================
+           BACK TO HOME
+        ====================================== */
+
+        .back-home {
+
+            display: block;
+
+            width: fit-content;
+
+            margin: 25px auto 0;
+
+            text-decoration: none;
+
+            color: #198754;
+
+            font-weight: bold;
+
+            transition: 0.3s;
+        }
+
+
+        .back-home:hover {
+
+            color: #14532d;
+
+            text-decoration: underline;
+        }
+
+
+        /* =====================================
+           MOBILE RESPONSIVE
+        ====================================== */
+
+        @media (max-width: 768px) {
+
+            .yield-container {
+
+                width: auto;
+
+                margin: 25px 15px;
+
+                padding: 25px 20px;
+            }
+
+
+            .yield-container h1 {
+
+                font-size: 26px;
+            }
+
+
+            .subtitle {
+
+                font-size: 16px;
+            }
+
+
+            .result-value {
+
+                font-size: 21px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<!-- =========================================
+     IMPORTANT:
+     yield-page connects this page to
+     the background in style.css
+========================================== -->
+
+<body class="yield-page">
+
+
+<!-- =========================================
+     MAIN YIELD PREDICTION CONTAINER
+========================================== -->
+
+<div class="yield-container">
+
+
+    <h1>
+        🌱 Smart Agriculture
+    </h1>
+
+
+    <p class="subtitle">
+        AI-Powered Crop Yield Prediction
+    </p>
+
+
+
+    <!-- =====================================
+         PREDICTION FORM
+    ====================================== -->
+
+    <form
+        action="{{ url_for('yield_prediction') }}"
+        method="POST"
+    >
+
+
+        <!-- CROP -->
+
+        <div class="form-group">
+
+            <label for="crop">
+                Crop
+            </label>
+
+
+            <select
+                id="crop"
+                name="crop"
+                required
+            >
+
+                <option value="">
+                    Select Crop
+                </option>
+
+
+                <option
+                    value="Rice"
+                    {% if form_data.crop == "Rice" %}selected{% endif %}
+                >
+                    Rice
+                </option>
+
+
+                <option
+                    value="Wheat"
+                    {% if form_data.crop == "Wheat" %}selected{% endif %}
+                >
+                    Wheat
+                </option>
+
+
+                <option
+                    value="Maize"
+                    {% if form_data.crop == "Maize" %}selected{% endif %}
+                >
+                    Maize
+                </option>
+
+
+                <option
+                    value="Cotton"
+                    {% if form_data.crop == "Cotton" %}selected{% endif %}
+                >
+                    Cotton
+                </option>
+
+
+                <option
+                    value="Sugarcane"
+                    {% if form_data.crop == "Sugarcane" %}selected{% endif %}
+                >
+                    Sugarcane
+                </option>
+
+
+                <option
+                    value="Groundnut"
+                    {% if form_data.crop == "Groundnut" %}selected{% endif %}
+                >
+                    Groundnut
+                </option>
+
+
+                <option
+                    value="Potato"
+                    {% if form_data.crop == "Potato" %}selected{% endif %}
+                >
+                    Potato
+                </option>
+
+            </select>
+
+        </div>
+
+
+
+        <!-- CROP YEAR -->
+
+        <div class="form-group">
+
+            <label for="crop_year">
+                Crop Year
+            </label>
+
+
+            <input
+                type="number"
+                id="crop_year"
+                name="crop_year"
+                value="{{ form_data.crop_year }}"
+                min="1990"
+                max="2030"
+                required
+            >
+
+        </div>
+
+
+
+        <!-- SEASON -->
+
+        <div class="form-group">
+
+            <label for="season">
+                Season
+            </label>
+
+
+            <select
+                id="season"
+                name="season"
+                required
+            >
+
+                <option value="">
+                    Select Season
+                </option>
+
+
+                <option
+                    value="Kharif"
+                    {% if form_data.season == "Kharif" %}selected{% endif %}
+                >
+                    Kharif
+                </option>
+
+
+                <option
+                    value="Rabi"
+                    {% if form_data.season == "Rabi" %}selected{% endif %}
+                >
+                    Rabi
+                </option>
+
+
+                <option
+                    value="Summer"
+                    {% if form_data.season == "Summer" %}selected{% endif %}
+                >
+                    Summer
+                </option>
+
+
+                <option
+                    value="Whole Year"
+                    {% if form_data.season == "Whole Year" %}selected{% endif %}
+                >
+                    Whole Year
+                </option>
+
+            </select>
+
+        </div>
+
+
+
+        <!-- STATE -->
+
+        <div class="form-group">
+
+            <label for="state">
+                State
+            </label>
+
+
+            <select
+                id="state"
+                name="state"
+                required
+            >
+
+                <option value="">
+                    Select State
+                </option>
+
+
+                <option
+                    value="Andhra Pradesh"
+                    {% if form_data.state == "Andhra Pradesh" %}selected{% endif %}
+                >
+                    Andhra Pradesh
+                </option>
+
+
+                <option
+                    value="Telangana"
+                    {% if form_data.state == "Telangana" %}selected{% endif %}
+                >
+                    Telangana
+                </option>
+
+
+                <option
+                    value="Punjab"
+                    {% if form_data.state == "Punjab" %}selected{% endif %}
+                >
+                    Punjab
+                </option>
+
+
+                <option
+                    value="Haryana"
+                    {% if form_data.state == "Haryana" %}selected{% endif %}
+                >
+                    Haryana
+                </option>
+
+
+                <option
+                    value="Maharashtra"
+                    {% if form_data.state == "Maharashtra" %}selected{% endif %}
+                >
+                    Maharashtra
+                </option>
+
+
+                <option
+                    value="Karnataka"
+                    {% if form_data.state == "Karnataka" %}selected{% endif %}
+                >
+                    Karnataka
+                </option>
+
+
+                <option
+                    value="Tamil Nadu"
+                    {% if form_data.state == "Tamil Nadu" %}selected{% endif %}
+                >
+                    Tamil Nadu
+                </option>
+
+
+                <option
+                    value="Uttar Pradesh"
+                    {% if form_data.state == "Uttar Pradesh" %}selected{% endif %}
+                >
+                    Uttar Pradesh
+                </option>
+
+
+                <option
+                    value="West Bengal"
+                    {% if form_data.state == "West Bengal" %}selected{% endif %}
+                >
+                    West Bengal
+                </option>
+
+            </select>
+
+        </div>
+
+
+
+        <!-- AREA -->
+
+        <div class="form-group">
+
+            <label for="area">
+                Area (hectares)
+            </label>
+
+
+            <input
+                type="number"
+                id="area"
+                name="area"
+                step="0.01"
+                min="0.01"
+                value="{{ form_data.area }}"
+                required
+            >
+
+        </div>
+
+
+
+        <!-- RAINFALL -->
+
+        <div class="form-group">
+
+            <label for="rainfall">
+                Annual Rainfall (mm)
+            </label>
+
+
+            <input
+                type="number"
+                id="rainfall"
+                name="rainfall"
+                step="0.01"
+                min="0"
+                value="{{ form_data.rainfall }}"
+                required
+            >
+
+        </div>
+
+
+
+        <!-- FERTILIZER -->
+
+        <div class="form-group">
+
+            <label for="fertilizer">
+                Fertilizer (kg)
+            </label>
+
+
+            <input
+                type="number"
+                id="fertilizer"
+                name="fertilizer"
+                step="0.01"
+                min="0"
+                value="{{ form_data.fertilizer }}"
+                required
+            >
+
+        </div>
+
+
+
+        <!-- PESTICIDE -->
+
+        <div class="form-group">
+
+            <label for="pesticide">
+                Pesticide (kg)
+            </label>
+
+
+            <input
+                type="number"
+                id="pesticide"
+                name="pesticide"
+                step="0.01"
+                min="0"
+                value="{{ form_data.pesticide }}"
+                required
+            >
+
+        </div>
+
+
+
+        <!-- =====================================
+             PREDICT BUTTON
+        ====================================== -->
+
+        <button
+            type="submit"
+            class="predict-btn"
+        >
+
+            🤖 Predict Crop Yield
+
+        </button>
+
+    </form>
+
+
+
+    <!-- =====================================
+         AI PREDICTION RESULT
+    ====================================== -->
+
+    {% if prediction is not none %}
+
+    <div class="result-box">
+
+
+        <h2>
+            🌱 AI Prediction Result
+        </h2>
+
+
+        <p>
+            <strong>
+                Estimated Yield:
+            </strong>
+        </p>
+
+
+        <p class="result-value">
+
+            {{ prediction }} tons/hectare
+
+        </p>
+
+
+        <p>
+            <strong>
+                Estimated Total Production:
+            </strong>
+        </p>
+
+
+        <p class="result-value">
+
+            {{ total_production }} tons
+
+        </p>
+
+
+        <p class="success-message">
+
+            ✅ AI yield prediction completed successfully.
+
+        </p>
+
+
+    </div>
+
+    {% endif %}
+
+
+
+    <!-- =====================================
+         ERROR MESSAGE
+    ====================================== -->
+
+    {% if error %}
+
+    <div class="error-box">
+
+        <strong>
+            ⚠️ Prediction Error
+        </strong>
+
+
+        <p>
+            {{ error }}
+        </p>
+
+    </div>
+
+    {% endif %}
+
+
+
+    <!-- =====================================
+         BACK TO HOME
+    ====================================== -->
+
+    <a
+        href="{{ url_for('home') }}"
+        class="back-home"
+    >
+
+        ← Back to Home
+
+    </a>
+
+
+</div>
+
+
+</body>
+
+</html>
