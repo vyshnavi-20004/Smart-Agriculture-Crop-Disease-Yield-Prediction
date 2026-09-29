@@ -19,15 +19,21 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_FOLDER = os.path.join(BASE_DIR, "uploads")
 
 DISEASE_MODEL_PATH = os.path.join(
-    BASE_DIR, "models", "crop_disease_model.keras"
+    BASE_DIR,
+    "models",
+    "crop_disease_model.keras"
 )
 
 CLASS_NAMES_PATH = os.path.join(
-    BASE_DIR, "models", "class_names.json"
+    BASE_DIR,
+    "models",
+    "class_names.json"
 )
 
 YIELD_MODEL_PATH = os.path.join(
-    BASE_DIR, "models", "yield_prediction_model.joblib"
+    BASE_DIR,
+    "models",
+    "yield_prediction_model.joblib"
 )
 
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
@@ -41,20 +47,6 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 tf.config.threading.set_intra_op_parallelism_threads(1)
 tf.config.threading.set_inter_op_parallelism_threads(1)
-
-
-# =========================================================
-# LOAD IMAGE VALIDATION MODEL
-# =========================================================
-
-print("Loading image validation model...")
-
-validation_model = tf.keras.applications.MobileNetV2(
-    weights="imagenet",
-    include_top=True
-)
-
-print("Image validation model loaded successfully!")
 
 
 # =========================================================
@@ -87,7 +79,7 @@ print("AI yield prediction model loaded successfully!")
 
 
 # =========================================================
-# IMAGE VALIDATION FUNCTION
+# LIGHTWEIGHT IMAGE VALIDATION
 # =========================================================
 
 def validate_crop_image(filepath):
@@ -95,227 +87,139 @@ def validate_crop_image(filepath):
     try:
 
         # Open image
-        img = Image.open(filepath).convert("RGB")
+        image = Image.open(filepath).convert("RGB")
 
-        # Resize for MobileNetV2
-        img = img.resize((224, 224))
+        # Very small images are usually not useful for analysis
+        width, height = image.size
 
-        # Convert to NumPy
-        img_array = np.array(img, dtype=np.float32)
+        if width < 100 or height < 100:
+            return False
 
-        # MobileNetV2 preprocessing
-        img_array = tf.keras.applications.mobilenet_v2.preprocess_input(
-            img_array
+        # Resize image for lightweight analysis
+        image = image.resize((128, 128))
+
+        image_array = np.asarray(
+            image,
+            dtype=np.float32
         )
 
-        # Add batch dimension
-        img_array = np.expand_dims(img_array, axis=0)
+        red = image_array[:, :, 0]
+        green = image_array[:, :, 1]
+        blue = image_array[:, :, 2]
 
-        # ImageNet prediction
-        predictions = validation_model.predict(
-            img_array,
-            verbose=0
-        )
-
-        decoded = tf.keras.applications.mobilenet_v2.decode_predictions(
-            predictions,
-            top=5
-        )[0]
-
-        print("Image validation predictions:")
-
-        for item in decoded:
-            print(
-                item[1],
-                round(float(item[2]) * 100, 2),
-                "%"
-            )
-
-        # -------------------------------------------------
-        # Classes that clearly indicate a non-crop image
-        # -------------------------------------------------
-
-        invalid_keywords = [
-
-            # People
-            "person",
-            "man",
-            "woman",
-            "boy",
-            "girl",
-            "groom",
-            "bride",
-
-            # Animals
-            "dog",
-            "cat",
-            "bird",
-            "horse",
-            "cow",
-            "sheep",
-            "goat",
-            "rabbit",
-            "monkey",
-            "elephant",
-            "tiger",
-            "lion",
-            "bear",
-
-            # Vehicles
-            "car",
-            "taxi",
-            "bus",
-            "truck",
-            "motorcycle",
-            "bicycle",
-            "airliner",
-            "airplane",
-            "ship",
-            "boat",
-
-            # Electronics
-            "cellphone",
-            "mobile",
-            "laptop",
-            "computer",
-            "television",
-            "monitor",
-            "keyboard",
-            "mouse",
-
-            # Buildings / places
-            "building",
-            "church",
-            "mosque",
-            "palace",
-            "castle",
-            "restaurant",
-            "shop",
-
-            # Furniture / objects
-            "chair",
-            "table",
-            "sofa",
-            "bed",
-            "book",
-            "pencil",
-            "pen",
-            "bottle",
-            "cup",
-            "backpack",
-            "umbrella",
-            "shoe",
-            "watch"
-        ]
-
-        # Check top predictions
-        for _, label, confidence in decoded:
-
-            label_lower = label.lower()
-
-            if confidence >= 0.20:
-
-                for keyword in invalid_keywords:
-
-                    if keyword in label_lower:
-
-                        return False
-
-        # -------------------------------------------------
-        # Check whether ImageNet detected a plant
-        # -------------------------------------------------
-
-        plant_keywords = [
-
-            "plant",
-            "leaf",
-            "tree",
-            "flower",
-            "daisy",
-            "sunflower",
-            "rose",
-            "corn",
-            "pot",
-            "cucumber",
-            "mushroom",
-            "acorn",
-            "pine",
-            "fir",
-            "fig",
-            "strawberry",
-            "orange",
-            "lemon",
-            "apple",
-            "banana",
-            "pineapple",
-            "pomegranate",
-            "grape",
-            "jackfruit",
-            "coffee"
-        ]
-
-        plant_found = False
-
-        for _, label, confidence in decoded:
-
-            label_lower = label.lower()
-
-            for keyword in plant_keywords:
-
-                if keyword in label_lower and confidence >= 0.05:
-
-                    plant_found = True
-                    break
-
-            if plant_found:
-                break
-
-        # -------------------------------------------------
-        # Additional green-pixel check
-        # -------------------------------------------------
-
-        original = Image.open(filepath).convert("RGB")
-        original = original.resize((256, 256))
-
-        image_array = np.array(original)
-
-        red = image_array[:, :, 0].astype(np.int16)
-        green = image_array[:, :, 1].astype(np.int16)
-        blue = image_array[:, :, 2].astype(np.int16)
+        # =================================================
+        # GREEN PIXEL CHECK
+        # =================================================
 
         green_pixels = (
             (green > red * 1.05) &
             (green > blue * 1.02) &
-            (green > 50)
+            (green > 45)
         )
 
-        green_ratio = np.mean(green_pixels)
+        green_ratio = float(
+            np.mean(green_pixels)
+        )
+
+        # =================================================
+        # NATURAL COLOR CHECK
+        # =================================================
+
+        # Brown/yellow/green colors are also common
+        # in leaves and diseased crop images.
+
+        plant_color_pixels = (
+
+            # Green
+            (
+                (green > red * 1.05) &
+                (green > blue * 1.02) &
+                (green > 45)
+            )
+
+            |
+
+            # Yellow
+            (
+                (red > 80) &
+                (green > 70) &
+                (blue < 100) &
+                (red > blue * 1.2)
+            )
+
+            |
+
+            # Brown
+            (
+                (red > blue * 1.25) &
+                (green > blue * 1.10) &
+                (red > 60) &
+                (green < 180)
+            )
+        )
+
+        plant_color_ratio = float(
+            np.mean(plant_color_pixels)
+        )
+
+        # =================================================
+        # IMAGE VARIATION CHECK
+        # =================================================
+
+        # Leaves usually contain some color variation.
+        # This helps reject completely plain images.
+
+        red_std = float(np.std(red))
+        green_std = float(np.std(green))
+        blue_std = float(np.std(blue))
+
+        color_variation = (
+            red_std +
+            green_std +
+            blue_std
+        )
+
+        # =================================================
+        # FINAL VALIDATION
+        # =================================================
 
         print(
-            "Green pixel ratio:",
-            round(float(green_ratio) * 100, 2),
+            "Green ratio:",
+            round(green_ratio * 100, 2),
             "%"
         )
 
-        # -------------------------------------------------
-        # Final validation decision
-        # -------------------------------------------------
+        print(
+            "Plant color ratio:",
+            round(plant_color_ratio * 100, 2),
+            "%"
+        )
 
-        if plant_found:
+        print(
+            "Color variation:",
+            round(color_variation, 2)
+        )
 
+        # Strong green image
+        if green_ratio >= 0.08:
             return True
 
-        # Allow images with a reasonable amount of green
-        # because some leaves may not be classified correctly
-        if green_ratio >= 0.08:
+        # Significant natural plant-like colors
+        if plant_color_ratio >= 0.20 and color_variation >= 35:
+            return True
 
+        # Mostly green/yellow/brown crop image
+        if plant_color_ratio >= 0.12 and color_variation >= 55:
             return True
 
         return False
 
     except Exception as e:
 
-        print("Image validation error:", e)
+        print(
+            "Image validation error:",
+            e
+        )
 
         return False
 
@@ -327,7 +231,9 @@ def validate_crop_image(filepath):
 @app.route("/")
 def home():
 
-    return render_template("index.html")
+    return render_template(
+        "index.html"
+    )
 
 
 # =========================================================
@@ -347,7 +253,10 @@ def uploaded_file(filename):
 # DISEASE DETECTION
 # =========================================================
 
-@app.route("/disease", methods=["GET", "POST"])
+@app.route(
+    "/disease",
+    methods=["GET", "POST"]
+)
 def disease():
 
     result = None
@@ -358,7 +267,9 @@ def disease():
 
     if request.method == "POST":
 
-        image = request.files.get("crop-image")
+        image = request.files.get(
+            "crop-image"
+        )
 
         if image and image.filename != "":
 
@@ -371,24 +282,32 @@ def disease():
 
             image.save(filepath)
 
-            image_path = "/uploads/" + os.path.basename(filepath)
+            image_path = (
+                "/uploads/" +
+                os.path.basename(filepath)
+            )
 
             try:
 
                 # ==========================================
-                # STEP 1: VALIDATE IMAGE
+                # STEP 1: LIGHTWEIGHT IMAGE VALIDATION
                 # ==========================================
 
-                is_valid_crop = validate_crop_image(filepath)
+                is_valid_crop = (
+                    validate_crop_image(
+                        filepath
+                    )
+                )
 
                 if not is_valid_crop:
 
                     status = "Invalid Image"
 
                     result = (
-                        "This image does not appear to be a "
-                        "crop or leaf image. Please upload a "
-                        "valid crop leaf image."
+                        "This image does not appear "
+                        "to be a crop or leaf image. "
+                        "Please upload a valid crop "
+                        "leaf image."
                     )
 
                     return render_template(
@@ -404,11 +323,15 @@ def disease():
                 # STEP 2: DISEASE PREDICTION
                 # ==========================================
 
-                img = Image.open(filepath).convert("RGB")
+                img = Image.open(
+                    filepath
+                ).convert("RGB")
 
-                img = img.resize((160, 160))
+                img = img.resize(
+                    (160, 160)
+                )
 
-                img_array = np.array(
+                img_array = np.asarray(
                     img,
                     dtype=np.float32
                 )
@@ -424,16 +347,22 @@ def disease():
                 )
 
                 predicted_index = int(
-                    np.argmax(predictions[0])
+                    np.argmax(
+                        predictions[0]
+                    )
                 )
 
                 confidence = float(
-                    predictions[0][predicted_index] * 100
+                    predictions[0][
+                        predicted_index
+                    ] * 100
                 )
 
-                prediction = class_names[
-                    predicted_index
-                ]
+                prediction = (
+                    class_names[
+                        predicted_index
+                    ]
+                )
 
                 # ==========================================
                 # CONFIDENCE CHECK
@@ -441,12 +370,15 @@ def disease():
 
                 if confidence < 60:
 
-                    status = "Uncertain Image"
+                    status = (
+                        "Uncertain Image"
+                    )
 
                     result = (
-                        "The image could not be classified "
-                        "with sufficient confidence. "
-                        "Please upload a clear crop leaf image."
+                        "The image could not be "
+                        "classified with sufficient "
+                        "confidence. Please upload "
+                        "a clear crop leaf image."
                     )
 
                     prediction = None
@@ -458,29 +390,45 @@ def disease():
                     # HEALTHY / DISEASE
                     # ======================================
 
-                    if "healthy" in prediction.lower():
+                    if (
+                        "healthy"
+                        in prediction.lower()
+                    ):
 
-                        status = "Healthy Crop"
+                        status = (
+                            "Healthy Crop"
+                        )
 
                     else:
 
-                        status = "Disease Detected"
+                        status = (
+                            "Disease Detected"
+                        )
 
                     result = (
-                        "AI analysis completed successfully!"
+                        "AI analysis completed "
+                        "successfully!"
                     )
 
             except Exception as e:
 
+                print(
+                    "Disease prediction error:",
+                    e
+                )
+
                 status = "Error"
 
                 result = (
-                    f"Prediction error: {str(e)}"
+                    "Prediction error: "
+                    f"{str(e)}"
                 )
 
         else:
 
-            result = "Please select a crop image."
+            result = (
+                "Please select a crop image."
+            )
 
     return render_template(
         "disease.html",
@@ -610,7 +558,8 @@ def yield_prediction():
             )
 
             total_production = (
-                predicted_yield * area
+                predicted_yield *
+                area
             )
 
             prediction = round(
